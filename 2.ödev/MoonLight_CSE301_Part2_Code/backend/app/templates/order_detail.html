@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}{% block title %}Order #{{ order.OrderID }}{% endblock %}
+{% block content %}
+<nav class="small mb-2"><a href="{{ '/admin/orders' if admin_view else '/orders' }}">{{ 'All orders' if admin_view else 'My orders' }}</a> / #{{ order.OrderID }}</nav>
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+  <div><h1 class="h4 mb-1">Order #{{ order.OrderID }} {{ badge(order.Status) }}</h1>
+    <div class="text-muted small">Placed on {{ order.OrderDate.strftime('%d.%m.%Y %H:%M') }}{% if admin_view %} by {{ order.FullName }} ({{ order.Email }}){% endif %}</div></div>
+  {% if not admin_view and order.Status in ('PENDING', 'PROCESSING') and not (shipments|selectattr('Status', 'in', ['SHIPPED', 'DELIVERED'])|list) %}
+  <form method="post" action="/orders/{{ order.OrderID }}/cancel" onsubmit="return confirm('Cancel this order?')"><button class="btn btn-outline-danger btn-sm">Cancel order</button></form>
+  {% endif %}
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="card h-100"><div class="card-body small"><h2 class="h6">Delivery address</h2>{{ order.FullName }}<br>{{ order.AddressLine }}<br>{{ order.District }} / {{ order.City }}</div></div></div>
+  <div class="col-md-4"><div class="card h-100"><div class="card-body small"><h2 class="h6">Payments</h2>
+    {% for p in payments %}<div class="d-flex justify-content-between"><span>{{ p.PaymentMethod|replace('_', ' ')|title }}</span><span>{{ p.Amount|money }} {{ badge(p.Status) }}</span></div>{% else %}No payment yet.{% endfor %}</div></div></div>
+  <div class="col-md-4"><div class="card h-100"><div class="card-body small"><h2 class="h6">Shipments (one per store)</h2>
+    {% for s in shipments %}<div class="mb-1"><strong>{{ s.StoreName }}</strong> {{ badge(s.Status) }}<br><span class="text-muted">{{ s.ItemCount }} item(s){% if s.TrackingNumber %} · tracking {{ s.TrackingNumber }}{% endif %}</span></div>
+    {% else %}{% if order.Status in ('PENDING', 'PROCESSING') %}The stores are preparing your items.{% else %}No shipments.{% endif %}{% endfor %}</div></div></div>
+</div>
+<div class="table-responsive"><table class="table align-middle">
+  <thead><tr><th>Product</th><th>Store</th><th class="text-end">Unit price</th><th class="text-center">Qty</th><th class="text-end">Total</th><th>Shipment</th></tr></thead>
+  <tbody>{% for i in items %}<tr><td><a href="/products/{{ i.ProductID }}">{{ i.ProductName }}</a></td><td class="small">{{ i.StoreName }}</td>
+    <td class="text-end">{{ i.UnitPrice|money }}</td><td class="text-center">{{ i.Quantity }}</td><td class="text-end">{{ i.LineTotal|money }}</td>
+    <td>{% if i.ShipmentID %}#{{ i.ShipmentID }} {{ badge(i.ShipmentStatus) }}{% else %}<span class="text-muted small">not shipped yet</span>{% endif %}</td></tr>{% endfor %}</tbody>
+  <tfoot><tr><th colspan="4" class="text-end">Order total</th><th class="text-end fs-5">{{ order.TotalAmount|money }}</th><th></th></tr></tfoot>
+</table></div>
+{% endblock %}

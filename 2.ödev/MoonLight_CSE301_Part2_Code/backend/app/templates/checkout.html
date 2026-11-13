@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% block title %}Checkout{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Checkout</h1>
+<div class="row g-4">
+  <div class="col-lg-7">
+    {% if addresses %}
+    <form method="post" action="/checkout" id="checkout">
+      <h2 class="h6">1. Delivery address</h2>
+      {% for a in addresses %}
+      <div class="form-check border rounded p-3 ps-5 mb-2"><input class="form-check-input" type="radio" name="address_id" id="a{{ a.AddressID }}" value="{{ a.AddressID }}" {% if loop.first %}checked{% endif %}>
+        <label class="form-check-label" for="a{{ a.AddressID }}"><strong>{{ a.City }} / {{ a.District }}</strong><br><span class="small">{{ a.AddressLine }}</span></label></div>
+      {% endfor %}
+      <h2 class="h6 mt-4">2. Payment method</h2>
+      <select class="form-select mb-2" name="method">{% for k, v in methods.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select>
+      <p class="small text-muted">Payment is simulated in this prototype and is recorded as completed.</p>
+    </form>
+    {% else %}<div class="alert alert-warning">Please add a delivery address first.</div>{% endif %}
+    <details class="mt-3" {% if not addresses %}open{% endif %}><summary class="small">Add a new address</summary>
+      <form class="row g-2 mt-1" method="post" action="/addresses"><input type="hidden" name="next" value="/checkout">
+        <div class="col-md-4"><input class="form-control" name="city" placeholder="City" required></div>
+        <div class="col-md-4"><input class="form-control" name="district" placeholder="District" required></div>
+        <div class="col-12"><input class="form-control" name="address_line" placeholder="Street, number, flat" required></div>
+        <div class="col-12"><button class="btn btn-outline-primary btn-sm">Save address</button></div></form></details>
+  </div>
+  <div class="col-lg-5"><div class="card"><div class="card-body">
+    <h2 class="h6">Order summary</h2>
+    <ul class="list-group list-group-flush small mb-3">{% for i in items %}<li class="list-group-item d-flex justify-content-between px-0"><span>{{ i.Quantity }} × {{ i.ProductName }}<br><span class="text-muted">{{ i.StoreName }}</span></span><span>{{ i.LineTotal|money }}</span></li>{% endfor %}</ul>
+    <div class="d-flex justify-content-between fs-5 fw-bold mb-3"><span>Total</span><span>{{ total|money }}</span></div>
+    <p class="small text-muted">Your order contains products from {{ items|map(attribute='StoreName')|unique|list|length }} store(s); each store will ship its items separately.</p>
+    {% if addresses %}<button class="btn btn-primary w-100" form="checkout"><i class="bi bi-lock me-1"></i>Place order and pay</button>{% endif %}
+  </div></div></div>
+</div>
+{% endblock %}

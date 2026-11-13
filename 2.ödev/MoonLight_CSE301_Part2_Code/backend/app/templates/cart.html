@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}{% block title %}Cart{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Shopping cart</h1>
+{% if items %}
+<div class="table-responsive"><table class="table align-middle">
+  <thead><tr><th>Product</th><th>Store</th><th class="text-end">Price</th><th style="width: 170px">Quantity</th><th class="text-end">Total</th><th></th></tr></thead>
+  <tbody>
+  {% for i in items %}
+  <tr><td><a href="/products/{{ i.ProductID }}">{{ i.ProductName }}</a>{% if i.ProductStatus != 'ACTIVE' %} {{ badge(i.ProductStatus) }}{% endif %}</td>
+    <td class="small">{{ i.StoreName }}</td><td class="text-end">{{ i.Price|money }}</td>
+    <td><form class="d-flex gap-1" action="/cart/update" method="post"><input type="hidden" name="product_id" value="{{ i.ProductID }}">
+      <input class="form-control form-control-sm" type="number" name="quantity" value="{{ i.Quantity }}" min="0" max="{{ i.Stock }}">
+      <button class="btn btn-sm btn-outline-secondary" title="Update"><i class="bi bi-arrow-repeat"></i></button></form></td>
+    <td class="text-end fw-semibold">{{ i.LineTotal|money }}</td>
+    <td><form action="/cart/update" method="post"><input type="hidden" name="product_id" value="{{ i.ProductID }}"><input type="hidden" name="quantity" value="0">
+      <button class="btn btn-sm btn-link text-danger" title="Remove"><i class="bi bi-trash"></i></button></form></td></tr>
+  {% endfor %}
+  </tbody>
+  <tfoot><tr><th colspan="4" class="text-end">Total</th><th class="text-end fs-5">{{ total|money }}</th><th></th></tr></tfoot>
+</table></div>
+<div class="d-flex justify-content-between"><a class="btn btn-outline-secondary" href="/products">Continue shopping</a>
+  <a class="btn btn-primary" href="/checkout">Proceed to checkout <i class="bi bi-arrow-right"></i></a></div>
+{% else %}
+<div class="alert alert-light border">Your cart is empty. <a href="/products">Browse the catalogue</a>.</div>
+{% endif %}
+{% endblock %}

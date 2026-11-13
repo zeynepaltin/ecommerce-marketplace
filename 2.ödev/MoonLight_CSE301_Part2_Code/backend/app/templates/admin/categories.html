@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Categories{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Categories <small class="text-muted fw-normal">({{ categories|length }})</small></h1>
+<div class="card card-body mb-3"><form class="row g-2" method="post" action="/admin/categories">
+  <div class="col-md-3"><input class="form-control" name="name" placeholder="New category name" required maxlength="100"></div>
+  <div class="col-md-7"><input class="form-control" name="description" placeholder="Description (optional)"></div>
+  <div class="col-md-2"><button class="btn btn-success w-100">Add</button></div></form></div>
+<div class="table-responsive"><table class="table table-sm align-middle small">
+  <thead><tr><th>#</th><th>Name and description</th><th class="text-end">Products on sale</th></tr></thead>
+  <tbody>{% for c in categories %}<tr><td>{{ c.CategoryID }}</td>
+    <td><form class="row g-1" method="post" action="/admin/categories/{{ c.CategoryID }}"><div class="col-4"><input class="form-control form-control-sm" name="name" value="{{ c.CategoryName }}" required></div>
+      <div class="col-7"><input class="form-control form-control-sm" name="description" value="{{ c.Description or '' }}"></div><div class="col-1"><button class="btn btn-sm btn-outline-primary"><i class="bi bi-check-lg"></i></button></div></form></td>
+    <td class="text-end">{{ c.ProductCount }}</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

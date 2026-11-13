@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block title %}My session{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">My session</h1>
+<div class="row g-3">
+  <div class="col-md-5"><div class="card h-100"><div class="card-body">
+    <h2 class="h6">Session variables</h2>
+    <table class="table table-sm small mb-0">
+      <tr><th>Name</th><td>{{ user.name }}</td></tr><tr><th>E-mail</th><td>{{ user.email }}</td></tr>
+      <tr><th>Role</th><td>{{ user.role }}</td></tr>
+      {% if user.customer_id %}<tr><th>Customer ID</th><td>{{ user.customer_id }}</td></tr><tr><th>Units in cart</th><td>{{ session.cart_count }}</td></tr>{% endif %}
+      {% if user.seller_id %}<tr><th>Seller ID</th><td>{{ user.seller_id }} ({{ user.seller_status }})</td></tr>{% endif %}
+      <tr><th>Signed in at</th><td>{{ session.login_at|replace('T', ' ') }}</td></tr>
+      <tr><th>Last activity</th><td>{{ session.last_activity|replace('T', ' ') }}</td></tr>
+      {% if session.last_order_id %}<tr><th>Last order</th><td>#{{ session.last_order_id }}</td></tr>{% endif %}
+    </table>
+    <p class="small text-muted mt-2 mb-0">You are signed out automatically after 30 minutes without activity.</p>
+  </div></div></div>
+  <div class="col-md-7"><div class="card h-100"><div class="card-body">
+    <h2 class="h6">Recent activity (last 8 pages)</h2>
+    <ul class="list-group list-group-flush small">{% for h in session.history %}<li class="list-group-item d-flex justify-content-between px-0"><a href="{{ h.path }}">{{ h.title }}</a><span class="text-muted">{{ h.at[11:19] }}</span></li>{% endfor %}</ul>
+  </div></div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Reviews{% endblock %}
+{% block content %}
+<h1 class="h4 mb-1">Review your purchases</h1>
+<p class="text-muted">Products from your delivered orders that you have not reviewed yet.</p>
+{% for i in items %}
+<div class="card mb-2"><div class="card-body">
+  <form class="row g-2 align-items-center" method="post" action="/reviews"><input type="hidden" name="product_id" value="{{ i.ProductID }}">
+    <div class="col-md-4"><a href="/products/{{ i.ProductID }}" class="fw-semibold">{{ i.ProductName }}</a><br><span class="small text-muted">{{ i.StoreName }} · delivered order of {{ i.LastPurchase.strftime('%d.%m.%Y') }}</span></div>
+    <div class="col-md-2"><select class="form-select" name="rating">{% for r in [5, 4, 3, 2, 1] %}<option value="{{ r }}">{{ '★' * r }}</option>{% endfor %}</select></div>
+    <div class="col-md-4"><input class="form-control" name="comment" placeholder="Comment (optional)"></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Submit</button></div></form></div></div>
+{% else %}<div class="alert alert-light border">There is nothing to review at the moment.</div>{% endfor %}
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% from "macros.html" import badge, pagination %}{% block title %}Orders{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h4 mb-0">All orders</h1>
+  <form method="get"><select class="form-select form-select-sm" name="status" onchange="this.form.submit()"><option value="">All statuses</option>{% for s in ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'] %}<option {% if s == status %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></form></div>
+<div class="table-responsive"><table class="table table-sm table-hover align-middle small">
+  <thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>City</th><th class="text-center">Shipments</th><th class="text-end">Total</th><th>Status</th></tr></thead>
+  <tbody>{% for o in orders %}<tr><td><a href="/admin/orders/{{ o.OrderID }}">#{{ o.OrderID }}</a></td><td>{{ o.OrderDate.strftime('%d.%m.%Y %H:%M') }}</td><td>{{ o.FullName }}</td><td>{{ o.City }}</td>
+    <td class="text-center">{{ o.ShipmentCount }}</td><td class="text-end">{{ o.TotalAmount|money }}</td><td>{{ badge(o.Status) }}</td></tr>{% endfor %}</tbody></table></div>
+{{ pagination(pager, request) }}
+{% endblock %}

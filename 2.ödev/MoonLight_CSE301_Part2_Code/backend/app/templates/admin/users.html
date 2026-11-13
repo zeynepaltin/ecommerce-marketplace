@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% from "macros.html" import badge, pagination %}{% block title %}Users{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Users &amp; stores</h1>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-3"><select class="form-select form-select-sm" name="role"><option value="">All roles</option>{% for r in ['CUSTOMER', 'SELLER', 'ADMIN'] %}<option {% if r == role %}selected{% endif %}>{{ r }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><select class="form-select form-select-sm" name="status"><option value="">Any status</option>{% for s in ['ACTIVE', 'PENDING', 'SUSPENDED', 'INACTIVE'] %}<option {% if s == status %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div>
+  <div class="col-md-4"><input class="form-control form-control-sm" name="q" value="{{ q }}" placeholder="Name, store or e-mail"></div>
+  <div class="col-md-2"><button class="btn btn-sm btn-primary w-100">Filter</button></div></form>
+<div class="table-responsive"><table class="table table-sm align-middle small">
+  <thead><tr><th>#</th><th>Name / store</th><th>E-mail</th><th>Role</th><th>Account</th><th>Change account</th><th>Store</th><th>Change store</th></tr></thead>
+  <tbody>{% for u in users %}<tr>
+    <td>{{ u.UserID }}</td><td>{{ u.DisplayName }}</td><td>{{ u.Email }}</td><td>{{ u.Role|title }}</td><td>{{ badge(u.Status) }}</td>
+    <td>{% if u.UserID != user.id %}<form class="d-flex gap-1" method="post" action="/admin/users/{{ u.UserID }}/status"><select class="form-select form-select-sm" name="status">{% for s in ['ACTIVE', 'SUSPENDED', 'INACTIVE'] %}<option {% if s == u.Status %}selected{% endif %}>{{ s }}</option>{% endfor %}</select><button class="btn btn-sm btn-outline-primary"><i class="bi bi-check-lg"></i></button></form>{% endif %}</td>
+    <td>{% if u.SellerID %}{{ badge(u.SellerStatus) }}{% endif %}</td>
+    <td>{% if u.SellerID %}<form class="d-flex gap-1" method="post" action="/admin/sellers/{{ u.SellerID }}/status"><select class="form-select form-select-sm" name="status">{% for s in ['ACTIVE', 'PENDING', 'SUSPENDED'] %}<option {% if s == u.SellerStatus %}selected{% endif %}>{{ s }}</option>{% endfor %}</select><button class="btn btn-sm btn-outline-primary"><i class="bi bi-check-lg"></i></button></form>{% endif %}</td></tr>
+  {% endfor %}</tbody></table></div>
+{{ pagination(pager, request) }}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}{% block title %}My products{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h4 mb-0">My products</h1>
+  <button class="btn btn-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#newp"><i class="bi bi-plus-lg"></i> New product</button></div>
+<div class="collapse mb-3 {% if not products %}show{% endif %}" id="newp"><div class="card card-body">
+  <form class="row g-2" method="post" action="/seller/products">
+    <div class="col-md-4"><input class="form-control" name="name" placeholder="Product name" required maxlength="150"></div>
+    <div class="col-md-3"><select class="form-select" name="category_id">{% for c in categories %}<option value="{{ c.CategoryID }}">{{ c.CategoryName }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><input class="form-control" name="price" placeholder="Price (₺)" required></div>
+    <div class="col-md-1"><input class="form-control" type="number" name="quantity" placeholder="Stock" min="0" required></div>
+    <div class="col-md-2"><button class="btn btn-success w-100">Add</button></div></form></div></div>
+<div class="table-responsive"><table class="table table-sm align-middle small">
+  <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Price (₺)</th><th>Listing</th><th></th><th>Stock</th><th>Stock updated</th></tr></thead>
+  <tbody>{% for p in products %}<tr>
+    <td>{{ p.ProductID }}</td>
+    <td colspan="5"><form class="row g-1 align-items-center" method="post" action="/seller/products/{{ p.ProductID }}">
+      <div class="col-5"><input class="form-control form-control-sm" name="name" value="{{ p.ProductName }}" required></div>
+      <div class="col-3"><select class="form-select form-select-sm" name="category_id">{% for c in categories %}<option value="{{ c.CategoryID }}" {% if c.CategoryID == p.CategoryID %}selected{% endif %}>{{ c.CategoryName }}</option>{% endfor %}</select></div>
+      <div class="col-2"><input class="form-control form-control-sm" name="price" value="{{ p.Price }}" required></div>
+      <div class="col-1"><select class="form-select form-select-sm" name="status" title="{{ p.Status }}"><option value="ACTIVE" {% if p.Status != 'INACTIVE' %}selected{% endif %}>On</option><option value="INACTIVE" {% if p.Status == 'INACTIVE' %}selected{% endif %}>Off</option></select></div>
+      <div class="col-1"><button class="btn btn-sm btn-outline-primary" title="Save"><i class="bi bi-check-lg"></i></button></div></form>
+      <div class="mt-1">{{ badge(p.Status) }}</div></td>
+    <td><form class="d-flex gap-1" method="post" action="/seller/products/{{ p.ProductID }}/stock"><input class="form-control form-control-sm {% if p.Stock < 10 %}border-warning{% endif %}" type="number" name="quantity" value="{{ p.Stock }}" min="0" style="width: 80px"><button class="btn btn-sm btn-outline-secondary" title="Update stock"><i class="bi bi-arrow-repeat"></i></button></form></td>
+    <td class="text-muted">{{ p.LastUpdated.strftime('%d.%m.%Y %H:%M') if p.LastUpdated else '-' }}</td></tr>
+  {% else %}<tr><td colspan="8" class="text-muted">No products yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Seller dashboard{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">{{ user.name }} <small class="text-muted fw-normal">seller dashboard</small></h1>
+{% if user.seller_status != 'ACTIVE' %}<div class="alert alert-warning">Your store is <strong>{{ user.seller_status|lower }}</strong>. Products can be listed after an administrator approves the store.</div>{% endif %}
+<div class="row g-3 mb-4">
+  {% for label, value, icon, link in [('Revenue (not cancelled)', stats.Revenue|money, 'cash-coin', '/seller/shipments'), ('Items to ship', stats.ItemsToShip, 'box-seam', '/seller/orders'),
+     ('Open shipments', stats.OpenShipments, 'truck', '/seller/shipments'), ('Active / all products', stats.ActiveProducts ~ ' / ' ~ stats.ProductCount, 'tags', '/seller/products'),
+     ('Low stock (< 10)', stats.LowStock, 'exclamation-triangle', '/seller/products'), ('Average rating', stats.AvgRating or '-', 'star', '/seller/products')] %}
+  <div class="col-6 col-lg-4"><a class="card card-body text-decoration-none ml-stat" href="{{ link }}"><i class="bi bi-{{ icon }} fs-3 text-primary"></i><div class="fs-4 fw-bold text-dark">{{ value }}</div><div class="small text-muted">{{ label }}</div></a></div>
+  {% endfor %}
+</div>
+<h2 class="h6">Best-selling products</h2>
+<table class="table table-sm"><thead><tr><th>Product</th><th class="text-end">Units sold</th><th class="text-end">Revenue</th></tr></thead>
+  <tbody>{% for t in top %}<tr><td>{{ t.ProductName }}</td><td class="text-end">{{ t.UnitsSold }}</td><td class="text-end">{{ t.Revenue|money }}</td></tr>{% else %}<tr><td colspan="3" class="text-muted">No sales yet.</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

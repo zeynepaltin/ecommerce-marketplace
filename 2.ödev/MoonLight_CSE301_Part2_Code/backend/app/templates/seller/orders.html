@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Orders to ship{% endblock %}
+{% block content %}
+<h1 class="h4 mb-1">Orders to ship</h1>
+<p class="text-muted">Paid order items of your store that are not in a shipment yet. Items of other stores in the same order are shipped by those stores.</p>
+{% for g in groups %}
+<div class="card mb-3"><div class="card-header d-flex justify-content-between align-items-center">
+  <span><strong>Order #{{ g.order.OrderID }}</strong> · {{ g.order.OrderDate.strftime('%d.%m.%Y %H:%M') }} · {{ g.order.FullName }}, {{ g.order.District }} / {{ g.order.City }}</span>
+  <form method="post" action="/seller/orders/{{ g.order.OrderID }}/ship"><button class="btn btn-sm btn-primary"><i class="bi bi-truck me-1"></i>Create shipment</button></form></div>
+  <ul class="list-group list-group-flush">{% for i in g.lines %}<li class="list-group-item d-flex justify-content-between"><span>{{ i.ProductName }}</span><span>× {{ i.Quantity }}</span></li>{% endfor %}</ul></div>
+{% else %}<div class="alert alert-light border">Nothing to ship right now.</div>{% endfor %}
+{% endblock %}

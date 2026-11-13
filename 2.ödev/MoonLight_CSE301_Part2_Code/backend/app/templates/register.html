@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}Register{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6">
+  <div class="card shadow-sm"><div class="card-body p-4">
+    {% if kind == 'seller' %}
+    <h1 class="h4">Open a store</h1><p class="text-muted small">Your store can list products after an administrator approves it.</p>
+    <form method="post" action="/register/seller">
+      <div class="mb-3"><label class="form-label">Store name</label><input class="form-control" name="store_name" value="{{ form.store_name if form else '' }}" required maxlength="100"></div>
+    {% else %}
+    <h1 class="h4">Create a customer account</h1>
+    <form method="post" action="/register">
+      <div class="mb-3"><label class="form-label">Full name</label><input class="form-control" name="full_name" value="{{ form.full_name if form else '' }}" required maxlength="100"></div>
+      <div class="mb-3"><label class="form-label">Phone <span class="text-muted">(optional)</span></label><input class="form-control" name="phone" value="{{ form.phone if form else '' }}" maxlength="20"></div>
+    {% endif %}
+      <div class="mb-3"><label class="form-label">E-mail</label><input class="form-control" type="email" name="email" value="{{ form.email if form else '' }}" required maxlength="100"></div>
+      <div class="row"><div class="col mb-3"><label class="form-label">Password</label><input class="form-control" type="password" name="password" minlength="8" required></div>
+        <div class="col mb-3"><label class="form-label">Repeat password</label><input class="form-control" type="password" name="password2" minlength="8" required></div></div>
+      <button class="btn btn-primary w-100">Register</button>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

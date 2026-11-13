@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% from "macros.html" import product_card, pagination %}
+{% block title %}{{ current.CategoryName if current else 'Catalogue' }}{% endblock %}
+{% block content %}
+<div class="row">
+  <aside class="col-lg-3 mb-3">
+    <div class="list-group small ml-catlist">
+      <a class="list-group-item list-group-item-action {% if not category %}active{% endif %}" href="/products?q={{ q }}&sort={{ sort }}">All categories</a>
+      {% for c in categories if c.ProductCount %}
+      <a class="list-group-item list-group-item-action d-flex justify-content-between {% if category == c.CategoryID %}active{% endif %}" href="/products?category={{ c.CategoryID }}&q={{ q }}&sort={{ sort }}">{{ c.CategoryName }}<span>{{ c.ProductCount }}</span></a>
+      {% endfor %}
+    </div>
+  </aside>
+  <section class="col-lg-9">
+    <form class="row g-2 align-items-center mb-3" method="get">
+      {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+      <div class="col"><h1 class="h4 mb-0">{{ current.CategoryName if current else 'All products' }}{% if q %} <small class="text-muted">· “{{ q }}”</small>{% endif %}</h1></div>
+      <div class="col-auto"><input class="form-control form-control-sm" name="q" value="{{ q }}" placeholder="Search"></div>
+      <div class="col-auto"><select class="form-select form-select-sm" name="sort" onchange="this.form.submit()">
+        {% for k, v in sorts.items() %}<option value="{{ k }}" {% if k == sort %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>
+    </form>
+    {% if products %}
+    <div class="row row-cols-2 row-cols-md-3 g-3 mb-3">{% for p in products %}<div class="col">{{ product_card(p) }}</div>{% endfor %}</div>
+    {{ pagination(pager, request) }}
+    {% else %}<div class="alert alert-light border">No products match your search.</div>{% endif %}
+  </section>
+</div>
+{% endblock %}

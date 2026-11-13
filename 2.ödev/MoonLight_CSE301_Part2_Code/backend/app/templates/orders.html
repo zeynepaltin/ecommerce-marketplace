@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}{% block title %}My orders{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">My orders</h1>
+{% if orders %}
+<div class="table-responsive"><table class="table table-hover align-middle">
+  <thead><tr><th>Order</th><th>Date</th><th>Delivery</th><th class="text-center">Items</th><th class="text-center">Stores</th><th class="text-end">Total</th><th>Status</th></tr></thead>
+  <tbody>{% for o in orders %}<tr>
+    <td><a href="/orders/{{ o.OrderID }}">#{{ o.OrderID }}</a></td><td>{{ o.OrderDate.strftime('%d.%m.%Y %H:%M') }}</td><td class="small">{{ o.City }} / {{ o.District }}</td>
+    <td class="text-center">{{ o.ItemCount }}</td><td class="text-center">{{ o.SellerCount }}</td><td class="text-end">{{ o.TotalAmount|money }}</td><td>{{ badge(o.Status) }}</td></tr>{% endfor %}</tbody>
+</table></div>
+{% else %}<div class="alert alert-light border">You have not placed any orders yet.</div>{% endif %}
+{% endblock %}

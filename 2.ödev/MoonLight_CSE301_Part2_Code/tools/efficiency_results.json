@@ -1,0 +1,121 @@
+{
+  "customer": 79,
+  "seller": 86,
+  "results": [
+    {
+      "code": "E1",
+      "title": "Catalogue page (12 products)",
+      "naive": "Read whole tables and filter, join and paginate in the application",
+      "optimized": "sp_browse_products: selected columns, filtering and LIMIT in the database",
+      "runs": 30,
+      "naive_metrics": {
+        "bytes_sent": 50299,
+        "bytes_received": 131,
+        "round_trips": 5.0,
+        "rows_read": 1054,
+        "rows_returned": 1037.0,
+        "ms": 7.27
+      },
+      "optimized_metrics": {
+        "bytes_sent": 1707,
+        "bytes_received": 49,
+        "round_trips": 1.0,
+        "rows_read": 1350,
+        "rows_returned": 12.0,
+        "ms": 2.38
+      }
+    },
+    {
+      "code": "E2",
+      "title": "Order history of a customer",
+      "naive": "N+1 queries: one query per order, address and product",
+      "optimized": "sp_get_customer_orders: one joined and grouped query",
+      "runs": 30,
+      "naive_metrics": {
+        "bytes_sent": 12545,
+        "bytes_received": 1162,
+        "round_trips": 24.0,
+        "rows_read": 41,
+        "rows_returned": 34.0,
+        "ms": 4.74
+      },
+      "optimized_metrics": {
+        "bytes_sent": 926,
+        "bytes_received": 36,
+        "round_trips": 1.0,
+        "rows_read": 39,
+        "rows_returned": 6.0,
+        "ms": 0.59
+      }
+    },
+    {
+      "code": "E3",
+      "title": "Seller dashboard figures",
+      "naive": "Download order lines and aggregate in the application",
+      "optimized": "sp_seller_dashboard: aggregation (SUM, COUNT) in the database",
+      "runs": 30,
+      "naive_metrics": {
+        "bytes_sent": 25881,
+        "bytes_received": 99,
+        "round_trips": 3.0,
+        "rows_read": 729,
+        "rows_returned": 722.0,
+        "ms": 6.12
+      },
+      "optimized_metrics": {
+        "bytes_sent": 317,
+        "bytes_received": 33,
+        "round_trips": 1.0,
+        "rows_read": 796,
+        "rows_returned": 1.0,
+        "ms": 0.99
+      }
+    },
+    {
+      "code": "E4",
+      "title": "Order list with totals (20 rows)",
+      "naive": "Compute every total from OrderItem (SUM ... GROUP BY)",
+      "optimized": "Read the stored Orders.TotalAmount (maintained by trg_orderitem_after_insert)",
+      "runs": 30,
+      "naive_metrics": {
+        "bytes_sent": 1730,
+        "bytes_received": 434,
+        "round_trips": 1.0,
+        "rows_read": 2127,
+        "rows_returned": 20.0,
+        "ms": 2.52
+      },
+      "optimized_metrics": {
+        "bytes_sent": 1768,
+        "bytes_received": 270,
+        "round_trips": 1.0,
+        "rows_read": 273,
+        "rows_returned": 20.0,
+        "ms": 0.59
+      }
+    },
+    {
+      "code": "E5",
+      "title": "Checkout of a 2-line cart",
+      "naive": "Application sends each statement of the transaction separately",
+      "optimized": "sp_place_order: the whole transaction in one CALL",
+      "runs": 10,
+      "naive_metrics": {
+        "bytes_sent": 490,
+        "bytes_received": 703,
+        "round_trips": 11.0,
+        "rows_read": 22,
+        "rows_returned": 4.0,
+        "ms": 3.91
+      },
+      "optimized_metrics": {
+        "bytes_sent": 138,
+        "bytes_received": 47,
+        "round_trips": 1.0,
+        "rows_read": 22,
+        "rows_returned": 1.0,
+        "ms": 4.67
+      }
+    }
+  ]
+}

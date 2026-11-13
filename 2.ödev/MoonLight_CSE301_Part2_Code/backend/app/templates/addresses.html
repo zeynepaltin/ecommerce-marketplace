@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}Addresses{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">My addresses</h1>
+<div class="row g-3 mb-4">{% for a in addresses %}<div class="col-md-4"><div class="card h-100"><div class="card-body"><strong>{{ a.City }} / {{ a.District }}</strong><br>{{ a.AddressLine }}</div></div></div>
+{% else %}<div class="col-12"><div class="alert alert-light border">You have not saved an address yet.</div></div>{% endfor %}</div>
+<div class="card"><div class="card-body"><h2 class="h6">Add an address</h2>
+  <form class="row g-2" method="post" action="/addresses">
+    <div class="col-md-3"><input class="form-control" name="city" placeholder="City" required maxlength="100"></div>
+    <div class="col-md-3"><input class="form-control" name="district" placeholder="District" required maxlength="100"></div>
+    <div class="col-md-4"><input class="form-control" name="address_line" placeholder="Street, number, flat" required maxlength="255"></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Save</button></div></form></div></div>
+{% endblock %}

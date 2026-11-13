@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% from "macros.html" import product_card %}
+{% block content %}
+<div class="p-4 p-md-5 mb-4 rounded-4 ml-hero text-white">
+  <h1 class="display-6 fw-bold">One cart, many independent stores.</h1>
+  <p class="lead mb-4">Shop from {{ categories|length }}+ categories. Every seller ships its own part of your order, and you can follow each shipment separately.</p>
+  <a class="btn btn-warning btn-lg" href="/products"><i class="bi bi-grid me-2"></i>Browse the catalogue</a>
+</div>
+<h2 class="h5 mb-3">Popular categories</h2>
+<div class="row g-2 mb-4">
+  {% for c in categories %}
+  <div class="col-6 col-md-3"><a class="card card-body text-decoration-none ml-cat" href="/products?category={{ c.CategoryID }}">
+    <span class="fw-semibold text-dark">{{ c.CategoryName }}</span><span class="small text-muted">{{ c.ProductCount }} products</span></a></div>
+  {% endfor %}
+</div>
+{% if recent %}
+<h2 class="h5 mb-3"><i class="bi bi-eye me-1"></i>Recently viewed <small class="text-muted fw-normal">(kept in your session)</small></h2>
+<div class="row row-cols-2 row-cols-md-4 g-3 mb-4">{% for p in recent %}<div class="col">{{ product_card(p) }}</div>{% endfor %}</div>
+{% endif %}
+<h2 class="h5 mb-3">Best rated</h2>
+<div class="row row-cols-2 row-cols-md-4 g-3 mb-4">{% for p in top_rated %}<div class="col">{{ product_card(p) }}</div>{% endfor %}</div>
+<h2 class="h5 mb-3">New arrivals</h2>
+<div class="row row-cols-2 row-cols-md-4 g-3">{% for p in latest %}<div class="col">{{ product_card(p) }}</div>{% endfor %}</div>
+{% endblock %}

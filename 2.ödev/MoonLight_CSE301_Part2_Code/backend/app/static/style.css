@@ -1,0 +1,12 @@
+/* CSE 301 - Moon Light marketplace styles */
+.ml-nav { background: linear-gradient(90deg, #1f2a5a, #2f5597); }
+.ml-hero { background: linear-gradient(120deg, #1f2a5a 0%, #2f5597 60%, #4a7bd0 100%); }
+.cart-badge { position: absolute; top: 0; right: -6px; font-size: .65rem; }
+.ml-card { transition: transform .12s ease, box-shadow .12s ease; }
+.ml-card:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.12) !important; }
+.ml-thumb { display: flex; align-items: center; justify-content: center; border-radius: .5rem .5rem 0 0; color: rgba(255,255,255,.85); font-size: 3rem; }
+.col-md-5 > .ml-thumb { border-radius: .75rem; font-size: 6rem; }
+.ml-hue-0 { background: #5b7fd6; } .ml-hue-1 { background: #3fa7a0; } .ml-hue-2 { background: #d68a5b; } .ml-hue-3 { background: #8a6fd1; }
+.ml-hue-4 { background: #d65b7f; } .ml-hue-5 { background: #6aa84f; } .ml-hue-6 { background: #c9a227; } .ml-hue-7 { background: #4f8fb0; }
+.ml-cat:hover, .ml-stat:hover { border-color: #2f5597; background: #f4f7fd; }
+.ml-catlist { max-height: 70vh; overflow-y: auto; }

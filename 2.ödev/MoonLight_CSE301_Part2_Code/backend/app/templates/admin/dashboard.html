@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}{% block title %}Admin dashboard{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Platform overview</h1>
+<div class="row g-3 mb-4">
+  {% for label, value, icon, link in [('Customers', stats.Customers, 'people', '/admin/users?role=CUSTOMER'), ('Active stores', stats.ActiveSellers, 'shop', '/admin/users?role=SELLER&status=ACTIVE'),
+     ('Stores awaiting approval', stats.PendingSellers, 'hourglass-split', '/admin/users?role=SELLER&status=PENDING'), ('Products on sale', stats.ActiveProducts, 'tags', '/admin/products'),
+     ('Orders', stats.Orders, 'receipt', '/admin/orders'), ('Revenue (not cancelled)', stats.Revenue|money, 'cash-coin', '/admin/orders'),
+     ('Open shipments', stats.OpenShipments, 'truck', '/admin/orders?status=PROCESSING'), ('Average rating', stats.AvgRating, 'star', '/admin/products')] %}
+  <div class="col-6 col-lg-3"><a class="card card-body text-decoration-none ml-stat" href="{{ link }}"><i class="bi bi-{{ icon }} fs-3 text-primary"></i><div class="fs-4 fw-bold text-dark">{{ value }}</div><div class="small text-muted">{{ label }}</div></a></div>
+  {% endfor %}
+</div>
+<div class="row g-4">
+  <div class="col-lg-6"><h2 class="h6">Orders by status</h2>
+    <table class="table table-sm"><thead><tr><th>Status</th><th class="text-end">Orders</th><th class="text-end">Value</th></tr></thead>
+    <tbody>{% for r in by_status %}<tr><td><a href="/admin/orders?status={{ r.Status }}">{{ badge(r.Status) }}</a></td><td class="text-end">{{ r.OrderCount }}</td><td class="text-end">{{ r.Amount|money }}</td></tr>{% endfor %}</tbody></table>
+    <h2 class="h6 mt-4">Top stores by revenue</h2>
+    <table class="table table-sm"><thead><tr><th>Store</th><th class="text-end">Orders</th><th class="text-end">Revenue</th></tr></thead>
+    <tbody>{% for t in top %}<tr><td>{{ t.StoreName }}</td><td class="text-end">{{ t.OrderCount }}</td><td class="text-end">{{ t.Revenue|money }}</td></tr>{% endfor %}</tbody></table></div>
+  <div class="col-lg-6"><h2 class="h6">Users online now <span class="badge text-bg-success">{{ online|length }}</span></h2>
+    <p class="small text-muted">Current activity of signed-in users (active within the last 30 minutes).</p>
+    <table class="table table-sm small"><thead><tr><th>User</th><th>Role</th><th>Current page</th><th>Signed in</th><th>Last seen</th></tr></thead>
+    <tbody>{% for o in online %}<tr><td>{{ o.name }}<br><span class="text-muted">{{ o.email }}</span></td><td>{{ o.role|title }}</td><td>{{ o.page }}</td><td>{{ o.login_at[11:16] }}</td><td>{{ o.last_seen[11:19] }}</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

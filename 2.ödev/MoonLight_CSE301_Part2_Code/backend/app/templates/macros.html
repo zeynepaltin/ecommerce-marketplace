@@ -1,0 +1,36 @@
+{% macro badge(s) %}<span class="badge text-bg-{{ status_color(s) }}">{{ (s or '-')|replace('_', ' ') }}</span>{% endmacro %}
+
+{% macro stars(r) %}{% if r %}<span class="text-warning">{% for i in range(1, 6) %}<i class="bi bi-star{% if r >= i %}-fill{% elif r >= i - 0.5 %}-half{% endif %}"></i>{% endfor %}</span>{% endif %}{% endmacro %}
+
+{% macro thumb(p, h=150) %}<div class="ml-thumb ml-hue-{{ p.ProductID % 8 }}" style="height: {{ h }}px"><i class="bi bi-box-seam"></i></div>{% endmacro %}
+
+{% macro product_card(p) %}
+<div class="card h-100 shadow-sm ml-card">
+  <a href="/products/{{ p.ProductID }}">{{ thumb(p) }}</a>
+  <div class="card-body d-flex flex-column">
+    <div class="small text-muted">{{ p.CategoryName }}</div>
+    <a class="stretched-link text-decoration-none text-dark fw-semibold" href="/products/{{ p.ProductID }}">{{ p.ProductName }}</a>
+    <div class="small text-muted mb-2">{{ p.StoreName }}</div>
+    <div class="mt-auto d-flex justify-content-between align-items-end">
+      <span class="fs-5 fw-bold text-primary">{{ p.Price|money }}</span>
+      <span class="small">{% if p.AvgRating %}{{ stars(p.AvgRating) }} <span class="text-muted">({{ p.ReviewCount }})</span>{% endif %}</span>
+    </div>
+    {% if p.Status == 'OUT_OF_STOCK' %}<span class="badge text-bg-secondary mt-2">Out of stock</span>{% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro pagination(pager, request) %}
+{% if pager.pages > 1 %}
+<nav><ul class="pagination pagination-sm justify-content-center flex-wrap">
+  <li class="page-item {% if pager.page == 1 %}disabled{% endif %}"><a class="page-link" href="{{ request.url.include_query_params(page=pager.page - 1) }}">&laquo;</a></li>
+  {% for n in range(1, pager.pages + 1) %}
+    {% if n == 1 or n == pager.pages or (n - pager.page)|abs <= 2 %}
+      <li class="page-item {% if n == pager.page %}active{% endif %}"><a class="page-link" href="{{ request.url.include_query_params(page=n) }}">{{ n }}</a></li>
+    {% elif (n - pager.page)|abs == 3 %}<li class="page-item disabled"><span class="page-link">…</span></li>{% endif %}
+  {% endfor %}
+  <li class="page-item {% if pager.page == pager.pages %}disabled{% endif %}"><a class="page-link" href="{{ request.url.include_query_params(page=pager.page + 1) }}">&raquo;</a></li>
+</ul></nav>
+<p class="text-center small text-muted">{{ pager.total }} records · page {{ pager.page }} of {{ pager.pages }}</p>
+{% endif %}
+{% endmacro %}

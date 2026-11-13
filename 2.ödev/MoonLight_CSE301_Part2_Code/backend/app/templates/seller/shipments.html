@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% from "macros.html" import badge %}{% block title %}Shipments{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Shipments</h1>
+<div class="table-responsive"><table class="table align-middle small">
+  <thead><tr><th>Shipment</th><th>Order</th><th>Customer</th><th>Destination</th><th class="text-center">Items</th><th>Status</th><th>Tracking / next step</th></tr></thead>
+  <tbody>{% for s in shipments %}<tr>
+    <td>#{{ s.ShipmentID }}</td><td>#{{ s.OrderID }}<br><span class="text-muted">{{ s.OrderDate.strftime('%d.%m.%Y') }}</span></td><td>{{ s.FullName }}</td><td>{{ s.District }} / {{ s.City }}</td>
+    <td class="text-center">{{ s.ItemCount }}</td><td>{{ badge(s.Status) }}</td>
+    <td>{% if s.Status == 'PREPARING' %}
+      <form class="d-flex gap-1" method="post" action="/seller/shipments/{{ s.ShipmentID }}"><input type="hidden" name="status" value="SHIPPED">
+        <input class="form-control form-control-sm" name="tracking" placeholder="Tracking number" required style="max-width: 180px"><button class="btn btn-sm btn-primary">Mark shipped</button></form>
+    {% elif s.Status == 'SHIPPED' %}{{ s.TrackingNumber }}
+      <form class="d-inline" method="post" action="/seller/shipments/{{ s.ShipmentID }}"><input type="hidden" name="status" value="DELIVERED"><button class="btn btn-sm btn-outline-success ms-2">Mark delivered</button></form>
+    {% else %}{{ s.TrackingNumber }}{% endif %}</td></tr>
+  {% else %}<tr><td colspan="7" class="text-muted">No shipments yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% from "macros.html" import thumb, stars, badge %}
+{% block title %}{{ product.ProductName }}{% endblock %}
+{% block content %}
+<nav class="small mb-3"><a href="/products">Catalogue</a> / <a href="/products?category={{ product.CategoryID }}">{{ product.CategoryName }}</a></nav>
+<div class="row g-4">
+  <div class="col-md-5">{{ thumb(product, 320) }}</div>
+  <div class="col-md-7">
+    <h1 class="h3">{{ product.ProductName }}</h1>
+    <p class="text-muted mb-2">Sold and shipped by <strong>{{ product.StoreName }}</strong></p>
+    <p>{% if product.AvgRating %}{{ stars(product.AvgRating) }} {{ product.AvgRating }} · {{ product.ReviewCount }} reviews{% else %}<span class="text-muted">No reviews yet</span>{% endif %}</p>
+    <p class="display-6 fw-bold text-primary">{{ product.Price|money }}</p>
+    {% set available = product.Status == 'ACTIVE' and product.SellerStatus == 'ACTIVE' %}
+    <p>{% if available %}<span class="text-success"><i class="bi bi-check-circle"></i> In stock ({{ product.Stock }} available)</span>
+       {% else %}{{ badge(product.Status if product.Status != 'ACTIVE' else 'INACTIVE') }} <span class="text-muted">This product cannot be ordered at the moment.</span>{% endif %}</p>
+    {% if available %}
+      {% if user and user.role == 'CUSTOMER' %}
+      <form class="row g-2" action="/cart/add" method="post">
+        <input type="hidden" name="product_id" value="{{ product.ProductID }}"><input type="hidden" name="next" value="/products/{{ product.ProductID }}">
+        <div class="col-auto"><input class="form-control" type="number" name="quantity" value="1" min="1" max="{{ product.Stock }}" style="width: 90px"></div>
+        <div class="col-auto"><button class="btn btn-primary"><i class="bi bi-cart-plus me-1"></i>Add to cart</button></div>
+      </form>
+      {% elif not user %}<a class="btn btn-primary" href="/login?next=/products/{{ product.ProductID }}">Sign in to buy</a>{% endif %}
+    {% endif %}
+    <hr><p class="small text-muted mb-0">Category: {{ product.CategoryName }} — {{ product.CategoryDescription or '' }}</p>
+  </div>
+</div>
+<h2 class="h5 mt-5">Customer reviews</h2>
+{% for r in reviews %}
+<div class="border rounded p-3 mb-2"><div>{{ stars(r.Rating) }} <strong class="ms-2">{{ r.FullName }}</strong></div>
+  {% if r.Comment %}<div class="mt-1">{{ r.Comment }}</div>{% endif %}</div>
+{% else %}<p class="text-muted">Reviews can be written by customers after the product has been delivered to them.</p>{% endfor %}
+{% endblock %}
